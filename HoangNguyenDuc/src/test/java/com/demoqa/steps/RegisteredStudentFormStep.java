@@ -3,12 +3,7 @@ package com.demoqa.steps;
 import com.demoqa.context.ScenarioContext;
 import com.demoqa.models.StudentInfo;
 import com.demoqa.pages.RegisteredStudentForm;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-
-import java.text.ParseException;
-
-import static com.demoqa.utils.DateUtils.convertSubDateToDate;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -34,23 +29,8 @@ public class RegisteredStudentFormStep {
         assertThat("Verify currentAddress", registeredStudentForm.getRegisteredAddress(), equalTo(studentInfo.getCurrentAddress()));
         if(!studentInfo.getState().equals("")){
             assertThat("Verify state and city", registeredStudentForm.getRegisteredStateAndCity(), equalTo(studentInfo.getState()+ " " + studentInfo.getCity()));
-        }else assertThat("Verify state and city", registeredStudentForm.getRegisteredStateAndCity(), equalTo(""));
-
+        }else assertThat("Verify state and city", registeredStudentForm.getRegisteredStateAndCity(), equalTo(studentInfo.getState()));
     }
-
-    @And("a form appear show the mandatory input information")
-    public void aFormAppearShowTheMandatoryInputInformation() throws ParseException {
-        String firstName = scenarioContext.getContext("firstName", String.class);
-        String lastName = scenarioContext.getContext("lastName", String.class);
-        String gender = scenarioContext.getContext("gender", String.class);
-        String mobile = scenarioContext.getContext("mobile", String.class);
-        String dateOfBirth = scenarioContext.getContext("dateOfBirth", String.class);
-        assertThat("Verify student name", registeredStudentForm.getRegisteredFullName(), equalTo(firstName+ " " + lastName));
-        assertThat("Verify gender", registeredStudentForm.getRegisteredGender(), equalTo(gender));
-        assertThat("Verify mobile", registeredStudentForm.getRegisteredMobile(), equalTo(mobile));
-        assertThat("Verify dateOfBirth", registeredStudentForm.getRegisteredDateOfBirth(), equalTo(convertSubDateToDate(dateOfBirth)));
-    }
-
     @Then("a successful message {string} is shown")
     public void aSuccessfulMessageIsShown(String thankYouMessage) {
         assertThat("Verify message", registeredStudentForm.getSubmittedMessage(), equalTo(thankYouMessage));

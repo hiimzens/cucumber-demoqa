@@ -14,7 +14,6 @@ import java.util.Map;
 
 public class RequestHelper {
     public Response sendRequest (APIConstants.RequestType method, String url, Headers headers, Object body) {
-        RestAssured.baseURI = APIConstants.DEMOQA_HOST;
         if(headers == null){
             Map<String,String> map = new HashMap<>();
             headers = createHeaders(map);
@@ -42,7 +41,7 @@ public class RequestHelper {
                 response = reqSpec.body(body).when().patch();
                 break;
             case DELETE:
-                response = reqSpec.when().delete(url);
+                response = reqSpec.body(body).when().delete(url);
                 break;
             default:
                 response = reqSpec.get(url);

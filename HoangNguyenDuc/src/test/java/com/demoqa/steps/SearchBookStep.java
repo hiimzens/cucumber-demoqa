@@ -25,12 +25,13 @@ public class SearchBookStep {
     public void theUserIsOnBookStorePage() {
         BasePage.navigate(BOOK_STORE_URL);
     }
-
-    @When("User inputs book name")
-    public void userInputsBookName(List<Map<String, String>> table) {
-        String bookNameQuery = table.get(0).get("bookName");
-        bookStorePage.inputQuerySearch(bookNameQuery);
-        scenarioContext.setContext("bookName", bookNameQuery);
+    @When("User input book name <bookName>")
+    public void userInputBookNameBookName() {
+    }
+    @When("The user input book name {string}")
+    public void theUserInputBookName(String bookName) {
+        bookStorePage.inputQuerySearch(bookName);
+        scenarioContext.setContext("bookName", bookName);
     }
 
     @Then("all books match with input criteria will be displayed.")
@@ -39,4 +40,6 @@ public class SearchBookStep {
         boolean searchResult = bookStorePage.isSearchResultCorrect(bookNameQuery);
         assertThat("Verify search result", searchResult, equalTo(true));
     }
+
+
 }

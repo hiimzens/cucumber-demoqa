@@ -1,0 +1,12 @@
+{
+  "userAdd":
+    {
+      "username": "hoangnguyenducdemo",
+      "password": "abcABC123@"
+    },
+  "userDelete":
+    {
+      "username": "hoangdemo",
+      "password": "abcABC123@"
+    }
+}

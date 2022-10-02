@@ -1,41 +1,47 @@
 package com.demoqa.steps;
 
-import com.demoqa.data_providers.InfoAddBook;
-import com.demoqa.data_providers.InfoDeleteBook;
+import com.demoqa.context.ScenarioContext;
 import com.demoqa.pages.BasePage;
 import com.demoqa.pages.LoginPage;
 import com.demoqa.utils.api.helper.AccountHelper;
+import com.google.gson.JsonObject;
 import io.cucumber.java.en.Given;
-
-import java.util.List;
-
+import io.restassured.path.json.JsonPath;
+import java.io.FileNotFoundException;
+import static com.demoqa.constants.FilePathConstants.ACCOUNT_INFO;
 import static com.demoqa.constants.UrlConstants.LOGIN_URL;
+import static com.demoqa.steps.StepHooks.baseURI;
+import static com.demoqa.utils.JsonUtil.loadJsonFile;
 
 
 public class LoginStep {
 
-    InfoAddBook infoAddBook = new InfoAddBook();
-    LoginPage loginPage = new LoginPage();
     AccountHelper accountHelper = new AccountHelper();
-    InfoDeleteBook infoDeleteBook = new InfoDeleteBook();
-    public static String userTokenDelete;
-
-
-    @Given("User want to add book logged in to the application")
-    public void userWantToAddBookLoggedInToTheApplication() {
-        BasePage.navigate(LOGIN_URL);
-        List<String> tokenAndExpires = accountHelper.generateToken(infoAddBook.getUsername(), infoAddBook.getPassword());
-        String addBookUserToken = tokenAndExpires.get(0);
-        String expires = tokenAndExpires.get(1);
-        loginPage.addLoginCookies(infoAddBook.loginParameterCookies(addBookUserToken,expires));
+    ScenarioContext scenarioContext;
+    LoginPage loginPage = new LoginPage();
+    public LoginStep(ScenarioContext context){
+        scenarioContext = context;
     }
 
-    @Given("User want to delete book logged in to the application")
-    public void userWantToDeleteBookLoggedInToTheApplication() {
+    @Given("User {string} logged in to the application")
+    public void userLoggedInToTheApplication(String purpose) throws FileNotFoundException {
         BasePage.navigate(LOGIN_URL);
-        List<String> tokenAndExpires = accountHelper.generateToken(infoDeleteBook.getUsername(), infoDeleteBook.getPassword());
-        userTokenDelete = tokenAndExpires.get(0);
-        String expires = tokenAndExpires.get(1);
-        loginPage.addLoginCookies(infoDeleteBook.loginParameterCookies(userTokenDelete,expires));
+        JsonObject accountsObject = loadJsonFile(ACCOUNT_INFO);
+        JsonObject accountLogin = switch (purpose) {
+            case "add" -> accountsObject.get("userAdd").getAsJsonObject();
+            case "delete" -> accountsObject.get("userDelete").getAsJsonObject();
+            default -> new JsonObject();
+        };
+        String username = accountLogin.get("username").getAsString();
+        String password = accountLogin.get("password").getAsString();
+        JsonPath session = accountHelper.getLoginRespond(baseURI, username, password);
+        String userToken = session.getString("token");
+        String userID = session.getString("userId");
+        loginPage.addCookiesParameterUserName(username);
+        loginPage.addCookiesParameterToken(userToken);
+        loginPage.addCookiesParameterUserID(userID);
+        loginPage.addCookiesParameterExpires(session.getString("expires"));
+        scenarioContext.setContext("userID",userID);
+        scenarioContext.setContext("userToken", userToken);
     }
 }

@@ -2,9 +2,7 @@ package com.demoqa.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import java.text.ParseException;
 import java.util.List;
-import static com.demoqa.utils.DateUtils.*;
 
 public class RegisterStudentPage extends BasePage {
     /**---------------------------Register Form------------------------------------------*/
@@ -52,11 +50,12 @@ public class RegisterStudentPage extends BasePage {
         WebElement dobField = findElement(DTP_DATE_OF_BIRTH);
         return dobField.getAttribute("value");
     }
-    public void selectDateOfBirth(String dateOfBirth) throws ParseException {
+    public void selectDateOfBirth(String dateOfBirth) {
         clickElement(DTP_DATE_OF_BIRTH);
-        selectOptionByText(DDL_YEAR_OF_BIRTH, getYear(dateOfBirth));
-        selectOptionByText(DDL_MONTH_OF_BIRTH, getMonth(dateOfBirth));
-        By OPT_DAY_OF_BIRTH = formatXpath(OPT_DAY_OF_BIRTH_XPATH,getDay(dateOfBirth));
+        String[] dateParts = dateOfBirth.split(" ");
+        selectOptionByText(DDL_YEAR_OF_BIRTH, dateParts[2]);
+        selectOptionByText(DDL_MONTH_OF_BIRTH, dateParts[1]);
+        By OPT_DAY_OF_BIRTH = formatXpath(OPT_DAY_OF_BIRTH_XPATH, dateParts[0]);
         clickElement(OPT_DAY_OF_BIRTH);
     }
     public void inputSubject(List<String> listSubjectParameter){

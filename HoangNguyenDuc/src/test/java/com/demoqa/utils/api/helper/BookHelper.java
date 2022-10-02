@@ -4,15 +4,15 @@ import com.demoqa.utils.api.APIConstants;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.restassured.http.Headers;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
+import static com.demoqa.utils.api.APIConstants.*;
+
 public class BookHelper extends RequestHelper {
-    private static final String BOOK_STORE_PREFIX = "/BookStore/v1";
-    private static final String ADD_BOOK_END_POINT = "/Books";
-    private static final String DELETE_BOOK_ENDPOINT = "/Book";
-    public static String prefixAccountURL = APIConstants.DEMOQA_HOST + BOOK_STORE_PREFIX;
-    public Response addBook(String userId, String token,String isbn) {
-        String url = prefixAccountURL + ADD_BOOK_END_POINT;
+
+    public Response addBook(String baseURI, String userId, String token,String isbn) {
+        String url = baseURI + BOOK_STORE_PREFIX + BOOKS_ENDPOINT;
         Headers headers = createHeaders(HeaderHelper.getAuthorizationHeaders(token));
         JsonArray collectionIsbn = new JsonArray();
         JsonObject bookIsbn = new JsonObject();
@@ -28,17 +28,34 @@ public class BookHelper extends RequestHelper {
                 body
         );
     }
-    public Response deleteBook(String userId, String token, String isbn) {
-        String url = prefixAccountURL + DELETE_BOOK_ENDPOINT;
+    public Response deleteAllBook(String baseURI, String userId, String token){
+        String url = baseURI + BOOK_STORE_PREFIX + BOOKS_ENDPOINT + DELETE_ALL_BOOK_ENDPOINT + userId;
         Headers headers = createHeaders(HeaderHelper.getAuthorizationHeaders(token));
         JsonObject body = new JsonObject();
-        body.addProperty("isbn",isbn);
-        body.addProperty("userId", userId);
         return sendRequest(
                 APIConstants.RequestType.DELETE,
                 url,
                 headers,
-                body
+                body.toString()
         );
+    }
+    public String getBookIsbn(String baseURI, String bookName) {
+        String url = baseURI + BOOK_STORE_PREFIX + BOOKS_ENDPOINT;
+        Headers headers = new Headers();
+        JsonObject body = new JsonObject();
+        Response response = sendRequest(
+                APIConstants.RequestType.GET,
+                url,
+                headers,
+                body
+
+        );
+        JsonPath respondBody = response.jsonPath();
+        for (int i = 0; i < respondBody.getList("books.title").size(); i++) {
+            if (respondBody.getList("books.title").get(i).equals(bookName)){
+                return respondBody.get("books["+i+"].isbn");
+            }
+        }
+        return null;
     }
 }

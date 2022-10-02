@@ -59,8 +59,12 @@ public class BasePage {
         Select select = new Select(element);
         select.selectByVisibleText(text);
     }
-    public boolean checkEnabledButton(By locator){
-        return findElement(locator).isEnabled();
+    public boolean isElementDisplayed(By locator){
+        try{
+            return findElement(locator).isDisplayed();
+        }catch (NoSuchElementException | StaleElementReferenceException exp){
+            return false;
+        }
     }
     public static By formatXpath(String stringLocator, String parameter){
         return By.xpath(String.format(stringLocator,parameter));
@@ -91,7 +95,7 @@ public class BasePage {
         js.executeScript("window.scrollBy(0,document.body.scrollHeight)");
     }
     public static void zoomOut() throws AWTException {
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i <= 4; i++) {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_CONTROL);
             robot.keyPress(KeyEvent.VK_MINUS);

@@ -1,21 +1,20 @@
 package com.demoqa.steps;
 
 import com.demoqa.context.ScenarioContext;
-import com.demoqa.data_providers.InfoDeleteBook;
 import com.demoqa.pages.BasePage;
 import com.demoqa.pages.ProfilePage;
+import com.demoqa.utils.api.helper.AccountHelper;
 import com.demoqa.utils.api.helper.BookHelper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static com.demoqa.constants.UrlConstants.PROFILE_URL;
-import static com.demoqa.steps.LoginStep.userTokenDelete;
+import static com.demoqa.steps.StepHooks.baseURI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class DeleteBookStep {
-    InfoDeleteBook infoDeleteBook = new InfoDeleteBook();
     ProfilePage profilePage = new ProfilePage();
     BookHelper bookHelper = new BookHelper();
     ScenarioContext scenarioContext;
@@ -26,8 +25,11 @@ public class DeleteBookStep {
 
     @Given("There is a book named {string}")
     public void thereIsABookNamed(String bookName) {
-        System.out.println("Delete book for precondition:" + bookName);
-        bookHelper.addBook(infoDeleteBook.getUserID(), userTokenDelete, infoDeleteBook.getIsbn());
+        String userID = scenarioContext.getContext("userID", String.class);
+        String userToken = scenarioContext.getContext("userToken",String.class);
+        String bookIsbn = bookHelper.getBookIsbn(baseURI,bookName);
+        System.out.println(bookIsbn);
+        bookHelper.addBook(baseURI, userID, userToken, bookIsbn);
     }
     @And("User is on profile page")
     public void userIsOnProfilePage() {
@@ -61,7 +63,7 @@ public class DeleteBookStep {
     @And("The book is not shown")
     public void theBookIsNotShown() {
         String bookName = scenarioContext.getContext("bookName", String.class);
-        boolean searchResult = profilePage.isProfileHaveBook(bookName);
+        boolean searchResult = profilePage.isBookShown(bookName);
         assertThat("Verify delete book on profile page", searchResult, equalTo(false));
     }
 }

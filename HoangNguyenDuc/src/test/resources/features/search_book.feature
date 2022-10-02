@@ -4,12 +4,10 @@ Feature: Search book on book store page
   @search_book_with_multiple_result
   Scenario Outline: Search book on profile page successfully
     Given The user is on Book Store Page
-    When User inputs book name
-      | bookName   |
-      | <bookName> |
+    When The user input book name "<bookName>"
     Then all books match with input criteria will be displayed.
     Examples:
       | bookName |
-      | Design   |
       | design   |
+      | Design   |
 

@@ -2,7 +2,6 @@ package com.demoqa.pages;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
-import java.util.List;
 
 public class BookStorePage extends BasePage{
     private static final String LNK_BOOK_XPATH = "//a[text()='%s']";
@@ -16,12 +15,8 @@ public class BookStorePage extends BasePage{
     public void inputQuerySearch(String bookName){
         inputText(TXT_SEARCH_BAR,bookName);
     }
-    public List<String> findBookElement(){
-        return getTextOfElements(LNK_BOOKS_OF_STORE,true);
-    }
     public boolean isSearchResultCorrect(String bookName){
-        List<String> searchResults = findBookElement();
-        for(String searchResult: searchResults){
+        for(String searchResult: getTextOfElements(LNK_BOOKS_OF_STORE,false)){
            if(!StringUtils.containsIgnoreCase(searchResult,bookName)){
                 return false;
             }

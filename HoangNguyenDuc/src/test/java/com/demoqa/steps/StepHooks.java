@@ -16,11 +16,14 @@ import java.util.Properties;
 
 public class StepHooks {
     public static WebDriver driver;
+    public static String baseURI;
 
     @BeforeAll
     public static void beforeAll() throws IOException {
         Properties properties = PropertiesFileUtil.loadPropertiesFromFile("src/test/resources/configs/dev.properties");
         PropertiesFileUtil.appendSystemProperties(properties);
+        baseURI = System.getProperty("API_URL");
+
     }
     @Before()
     public void beforeScenario(){

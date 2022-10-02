@@ -1,7 +1,7 @@
 Feature: Add book to collection
   As a user, I would like to add a book to my collection
   Background: User have logged into the application
-    Given User want to add book logged in to the application
+    Given User "add" logged in to the application
 
   @successfully_add_book_to_collection
   Scenario: Add book to collection successfully

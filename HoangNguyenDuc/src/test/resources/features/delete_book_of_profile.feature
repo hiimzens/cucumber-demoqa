@@ -1,7 +1,7 @@
 Feature: Delete book from profile
   As a user, I would like to delete a book from my profile
   Background: User have logged into the application
-    Given User want to delete book logged in to the application
+    Given User "delete" logged in to the application
 
   @successfully_delete_book_on_profile_page
   Scenario: Delete book on profile page successfully
